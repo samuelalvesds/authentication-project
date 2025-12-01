@@ -18,6 +18,4 @@ export const sendEmail = async (to: string, subject: string, body: string) => {
     } catch (err) {
         return false;
     }
-
-
 }
