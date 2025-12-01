@@ -1,10 +1,13 @@
+import { id } from 'zod/v4/locales';
 
 import { RequestHandler } from "express";
 import { authSignInSchema } from "../schemas/auth-signin";
 import { createUser, getUserByEmail } from "../services/user";
-import { generateOtp } from "../services/otp";
+import { generateOtp, validateOTP } from "../services/otp";
 import { sendEmail } from "../libs/mailtrap";
 import { authSignUpSchema } from "../schemas/auth-signup"
+import { createJWT } from "../libs/jwt";
+import { authUseOTPSchema } from "../schemas/auth-useotp";
 
 export const singin: RequestHandler = async (req, res) => {
 
@@ -61,3 +64,27 @@ export const signup: RequestHandler = async (req, res) => {
     // Return the new user data
     res.status(200).json({ user: newUser });
 }
+
+
+export const useOTP: RequestHandler = async (req, res) => {
+
+    // Verify if data exist
+    const data = authUseOTPSchema.safeParse(req.body)
+    if (!data.success) {
+        res.json({ error: data.error.flatten().fieldErrors })
+        return;
+    }
+
+    // Validate OTP
+    const user = await validateOTP(data.data.id, data.data.code)
+    if (!user) {
+        res.json({ error: 'Invalid or expired OTP' })
+        return
+    }
+
+    // Create JWT
+    const token = createJWT(user.id)
+
+    // Return JWT
+    res.json({ token, user })
+}   
