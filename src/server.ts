@@ -14,5 +14,5 @@ server.use(mainRouter);
 
 const port = process.env.PORT;
 server.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}/`)
+    console.log(`Server is running at http://localhost:${port}/`)
 });

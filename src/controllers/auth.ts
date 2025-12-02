@@ -27,7 +27,7 @@ export const singin: RequestHandler = async (req, res) => {
         return;
     }
 
-    // Generate OTP Code for this user
+    // Generate OTP Code for user
     const otp = generateOtp(user.id)
 
     // Send Email with the OTP code for user
